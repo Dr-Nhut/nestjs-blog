@@ -1,0 +1,24 @@
+POST http://localhost:3000/posts/1
+Content-Type: application/json
+
+{
+  "title": "How to Write a Great Blog Post",
+  "postType": "page", 
+  "slug": "how-to-write-a-great-blog-post",
+  "status": "draft",
+  "content": "This is a comprehensive guide to writing a great blog post.",
+  "schema": "{\"type\":\"blog\",\"categories\":[\"tech\",\"writing\"]}",
+  "featuredImageUrl": "https://example.com/featured-image.jpg",
+  "publishingOn": "2024-12-31T10:00:00.000Z",
+  "tags": ["writing", "blog", "content-creation"],
+  "metaOptions": [
+    {
+      "key": "author",
+      "value": "John Doe"
+    },
+    {
+      "key": "category",
+      "value": "Technology"
+    }
+  ]
+}

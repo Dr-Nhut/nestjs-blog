@@ -1,0 +1,7 @@
+PATCH http://localhost:3000/posts/1
+Content-Type: application/json
+
+{
+  "title": "How to Write a Great Blog Post",
+  "postType":"post"
+}
