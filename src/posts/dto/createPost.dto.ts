@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsEnum,
+  IsInt,
   IsISO8601,
   IsJSON,
   IsNotEmpty,
@@ -8,12 +9,11 @@ import {
   IsString,
   IsUrl,
   Matches,
-  MinLength,
   ValidateNested,
 } from 'class-validator';
 import { postType } from '../enums/postType.enum';
 import { status } from '../enums/status.enum';
-import { CreatePostMetaOptionsDto } from './createPostMetaOptions.dto';
+import { CreatePostMetaOptionsDto } from '../../meta-options/dtos/createPostMetaOptions.dto';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -58,31 +58,37 @@ export class CreatePostDto {
   @IsISO8601()
   publishingOn?: Date;
 
-  @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true }) // string[]
-  @MinLength(3, { each: true })
-  tags: string[];
-
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: 'array',
     items: {
-      type: 'object',
-      properties: {
-        key: {
-          type: 'string',
-          example: 'author',
-        },
-        value: {
-          type: 'any',
-          example: 'Archer',
-        },
+      type: 'integer',
+      example: 1,
+    },
+  })
+  @IsNotEmpty()
+  @IsArray()
+  @IsInt({ each: true })
+  tags: number[];
+
+  @ApiProperty({
+    type: 'integer',
+    example: 1,
+  })
+  @IsNotEmpty()
+  @IsInt()
+  authorId: number;
+
+  @ApiPropertyOptional({
+    type: 'object',
+    properties: {
+      metaValue: {
+        type: 'string',
+        example: '{ "author": "Archer"}',
       },
     },
   })
   @IsOptional()
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreatePostMetaOptionsDto)
-  metaOptions?: CreatePostMetaOptionsDto[];
+  metaOption?: CreatePostMetaOptionsDto | null;
 }

@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { PostsService } from './providers/posts.service';
 import { GetPostsParamDto } from './dto/getPosts.params.dto';
 import { CreatePostDto } from './dto/createPost.dto';
@@ -13,15 +23,18 @@ export class PostsController {
     return this.postsService.findAll(getPostsParamDto);
   }
 
-  @Post('/:userId')
+  @Post()
   create(@Body() createPostDto: CreatePostDto) {
-    console.log(createPostDto);
-    return 'This is a new post';
+    return this.postsService.create(createPostDto);
   }
 
-  @Patch('/:userId')
+  @Patch()
   update(@Body() updatePostDto: UpdatePostDto) {
-    console.log(updatePostDto);
-    return 'This is a update post';
+    return this.postsService.update(updatePostDto);
+  }
+
+  @Delete()
+  remove(@Query('id', ParseIntPipe) id: number) {
+    return this.postsService.delete(id);
   }
 }

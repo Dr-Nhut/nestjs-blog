@@ -1,45 +1,50 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { Post } from 'src/posts/providers/posts.service';
 import { AuthService } from 'src/auth/providers/auth.service';
-
-export interface User {
-  id: number;
-  firstName: string;
-  lastName?: string;
-  email: string;
-  password: string;
-  posts: Post[];
-}
-
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../user.entity';
 @Injectable()
 export class UsersService {
-  private id: number = 0;
-  private readonly users: User[] = [];
-
   constructor(
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  findAll(
-    getUsersParamDto: GetUsersParamDto,
-    limit: number,
-    page: number,
-  ): User[] {
-    return this.users;
+  // findAll(
+  //   getUsersParamDto: GetUsersParamDto,
+  //   limit: number,
+  //   page: number,
+  // ): User1[] {
+  //   return this.users;
+  // }
+
+  async findById(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
-  findById(id: string): User {
-    const isAuth = this.authService.isAuth();
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    // check if user already exists
+    const isExistUser = await this.userRepository.findOne({
+      where: {
+        email: createUserDto.email,
+      },
+    });
 
-    console.log(isAuth);
+    if (isExistUser) {
+      throw new BadRequestException('User already exists');
+    }
 
-    return this.users.find((u) => u.id === parseInt(id));
-  }
+    const newUser = this.userRepository.create(createUserDto);
 
-  create(createUserDto: CreateUserDto): void {
-    this.users.push({ id: this.id++, ...createUserDto, posts: [] });
+    return await this.userRepository.save(newUser);
   }
 }
