@@ -10,6 +10,9 @@ import { AuthService } from 'src/auth/providers/auth.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
+import { ConfigType } from '@nestjs/config';
+import profileConfig from '../config/profile.config';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -17,6 +20,9 @@ export class UsersService {
     private authService: AuthService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    //module configuation
+    @Inject(profileConfig.KEY)
+    private profileConfiguation: ConfigType<typeof profileConfig>,
   ) {}
 
   // findAll(
@@ -33,6 +39,10 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // check if user already exists
+
+    //test partial config
+    console.log(this.profileConfiguation);
+
     const isExistUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email,
