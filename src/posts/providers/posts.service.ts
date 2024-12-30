@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { GetPostsParamDto } from '../dto/getPosts.params.dto';
 import { UsersService } from 'src/users/providers/users.service';
 import { Repository } from 'typeorm';
@@ -38,8 +42,26 @@ export class PostsService {
   }
 
   public async create(createPostDto: CreatePostDto): Promise<Post> {
-    const author = await this.usersService.findById(createPostDto.authorId);
-    const tags = await this.tagsService.findMultipleById(createPostDto.tags);
+    let author = undefined,
+      tags = undefined;
+
+    try {
+      author = await this.usersService.findById(createPostDto.authorId);
+      tags = await this.tagsService.findMultipleById(createPostDto.tags);
+    } catch (err) {
+      throw new RequestTimeoutException('The request timed out', {
+        description: 'The database was not found',
+      });
+    }
+
+    if (!author) {
+      throw new NotFoundException('The author was not found');
+    }
+
+    if (tags?.length !== createPostDto.tags.length) {
+      throw new NotFoundException('The tags was not found');
+    }
+
     //Create new post
     const newPost = this.postRepository.create({
       ...createPostDto,
@@ -47,7 +69,13 @@ export class PostsService {
       tags,
     });
     // return save
-    return await this.postRepository.save(newPost);
+    try {
+      return await this.postRepository.save(newPost);
+    } catch (err) {
+      throw new RequestTimeoutException('The request timed out', {
+        description: 'The database was not found',
+      });
+    }
   }
 
   public async update(updatePostDto: UpdatePostDto) {

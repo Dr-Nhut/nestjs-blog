@@ -1,8 +1,11 @@
 import {
   BadRequestException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -12,6 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
 import { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
+import { error } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -25,24 +29,33 @@ export class UsersService {
     private profileConfiguation: ConfigType<typeof profileConfig>,
   ) {}
 
-  // findAll(
-  //   getUsersParamDto: GetUsersParamDto,
-  //   limit: number,
-  //   page: number,
-  // ): User1[] {
-  //   return this.users;
-  // }
+  findAll(getUsersParamDto: GetUsersParamDto, limit: number, page: number) {
+    //custom exception
+    throw new HttpException(
+      {
+        status: HttpStatus.MOVED_PERMANENTLY,
+        message: 'This API endpoint is not supported',
+      },
+      HttpStatus.MOVED_PERMANENTLY,
+      {
+        description: 'This API endpoint is not supported',
+        cause: new Error(),
+      },
+    );
+  }
 
   async findById(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+    try {
+      return this.userRepository.findOneBy({ id });
+    } catch (err) {
+      throw new RequestTimeoutException('This request timed out', {
+        description: 'This data was not found',
+      });
+    }
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // check if user already exists
-
-    //test partial config
-    console.log(this.profileConfiguation);
-
     const isExistUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email,
@@ -50,11 +63,15 @@ export class UsersService {
     });
 
     if (isExistUser) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException('This email already exists');
     }
 
     const newUser = this.userRepository.create(createUserDto);
 
-    return await this.userRepository.save(newUser);
+    try {
+      return await this.userRepository.save(newUser);
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
   }
 }
