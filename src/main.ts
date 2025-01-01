@@ -10,6 +10,9 @@ async function bootstrap() {
       whitelist: true, //check property don't exist in dto
       forbidNonWhitelisted: true,
       transform: true, //transfrom to an instance DTO
+      transformOptions: {
+        enableImplicitConversion: true, // transforms from string to boolean | number | ...
+      },
     }),
   );
 

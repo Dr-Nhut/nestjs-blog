@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   RequestTimeoutException,
@@ -12,6 +13,9 @@ import { CreatePostDto } from '../dto/createPost.dto';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { UpdatePostDto } from '../dto/updatePost.dto';
+import { GetPostsDto } from '../dto/get-posts.dto';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
 
 @Injectable()
 export class PostsService {
@@ -22,21 +26,17 @@ export class PostsService {
     private readonly postRepository: Repository<Post>,
     @InjectRepository(MetaOption)
     private readonly metaOptionRepository: Repository<MetaOption>,
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async findAll(getPostsParamDto: GetPostsParamDto): Promise<Post[]> {
-    // const user = this.usersService.findById(getPostsParamDto.userId);
-    // if (!user) {
-    //   throw new Error('User not found');
-    // }
-
-    const posts = await this.postRepository.find({
-      relations: {
-        metaOption: true,
-        author: true,
-        tags: true,
-      },
-    });
+  public async findAll(
+    getPostsParamDto: GetPostsParamDto,
+    postsQuery: GetPostsDto,
+  ): Promise<Paginated<Post>> {
+    const posts = await this.paginationProvider.paginateQuery(
+      this.postRepository,
+      postsQuery,
+    );
 
     return posts;
   }

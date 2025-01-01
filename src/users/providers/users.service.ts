@@ -15,7 +15,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
 import { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
-import { error } from 'console';
+import { UsersCreateManyProvider } from './users-create-many.provider';
+import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +28,8 @@ export class UsersService {
     //module configuation
     @Inject(profileConfig.KEY)
     private profileConfiguation: ConfigType<typeof profileConfig>,
+
+    private readonly usersCreateManyProvider: UsersCreateManyProvider,
   ) {}
 
   findAll(getUsersParamDto: GetUsersParamDto, limit: number, page: number) {
@@ -73,5 +76,9 @@ export class UsersService {
     } catch (err) {
       throw new BadRequestException(err);
     }
+  }
+
+  async createMany(createMultipleUsers: CreateManyUsersDto) {
+    return await this.usersCreateManyProvider.createMany(createMultipleUsers);
   }
 }

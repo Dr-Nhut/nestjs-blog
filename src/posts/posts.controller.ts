@@ -13,14 +13,19 @@ import { PostsService } from './providers/posts.service';
 import { GetPostsParamDto } from './dto/getPosts.params.dto';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
+import { GetPostsDto } from './dto/get-posts.dto';
 
 @Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get('/:userId?')
-  findAll(@Param() getPostsParamDto: GetPostsParamDto) {
-    return this.postsService.findAll(getPostsParamDto);
+  findAll(
+    @Param() getPostsParamDto: GetPostsParamDto,
+    @Query() postsQuery: GetPostsDto,
+  ) {
+    console.log(postsQuery);
+    return this.postsService.findAll(getPostsParamDto, postsQuery);
   }
 
   @Post()
