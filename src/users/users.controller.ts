@@ -17,10 +17,14 @@ import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { CreateManyUsersDto } from './dtos/create-many-users.dto';
+import { CreateUserProvider } from './providers/create-user.provider';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private createUserProvider: CreateUserProvider,
+  ) {}
   // @Get('/:id?')
   // @ApiOperation({
   //   summary: 'Fetches a list of users',
@@ -50,7 +54,7 @@ export class UsersController {
 
   @Post()
   public create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+    return this.createUserProvider.create(createUserDto);
   }
 
   @Post('create-many')

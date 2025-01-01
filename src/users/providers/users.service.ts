@@ -1,14 +1,13 @@
 import {
-  BadRequestException,
   forwardRef,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
+  NotFoundException,
   RequestTimeoutException,
 } from '@nestjs/common';
 import { GetUsersParamDto } from '../dtos/get-users-param.dto';
-import { CreateUserDto } from '../dtos/create-user.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -57,25 +56,16 @@ export class UsersService {
     }
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    // check if user already exists
-    const isExistUser = await this.userRepository.findOne({
-      where: {
-        email: createUserDto.email,
-      },
+  async findByEmail(email: string): Promise<User> {
+    const user: User | undefined = await this.userRepository.findOne({
+      where: { email },
     });
 
-    if (isExistUser) {
-      throw new BadRequestException('This email already exists');
+    if (!user) {
+      throw new NotFoundException(`Can't found user by ${email}`);
     }
 
-    const newUser = this.userRepository.create(createUserDto);
-
-    try {
-      return await this.userRepository.save(newUser);
-    } catch (err) {
-      throw new BadRequestException(err);
-    }
+    return user;
   }
 
   async createMany(createMultipleUsers: CreateManyUsersDto) {
