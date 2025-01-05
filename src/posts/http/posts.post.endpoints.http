@@ -1,18 +1,19 @@
 POST http://localhost:3000/posts
 Content-Type: application/json
 
+
 {
-  "title": "How to Write a Great Blog Post",
-  "postType": "page", 
-  "slug": "how-to-write-a-great-blog-post-8",
-  "status": "draft",
-  "content": "This is a comprehensive guide to writing a great blog post.",
-  "schema": "{\"type\":\"blog\",\"categories\":[\"tech\",\"writing\"]}",
-  "featuredImageUrl": "https://example.com/featured-image.jpg",
-  "publishingOn": "2024-12-31T10:00:00.000Z",
-  "tags": [1],
-  "metaOption": {
-      "metaValue": "{ \"author\": \"Archer\"}" 
+    "title": "Healthy Eating: A Beginner's Guide",
+    "postType": "page",
+    "slug": "healthy-eating-beginners-guide",
+    "status": "publish",
+    "content": "Learn the basics of healthy eating and nutrition.",
+    "schema": "{\"type\":\"blog\",\"categories\":[\"health\",\"nutrition\"]}",
+    "featuredImageUrl": "https://example.com/healthy-eating.jpg",
+    "publishingOn": "2025-03-10T10:00:00Z",
+    "tags": [3],
+    "metaOption": {
+      "metaValue": "{ \"author\": \"Jamie\"}"
     },
-  "authorId": 1 
-}
+    "authorId": 4
+  }

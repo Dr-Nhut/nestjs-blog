@@ -1,8 +1,8 @@
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsInt,
-  IsISO8601,
   IsJSON,
   IsNotEmpty,
   IsOptional,
@@ -55,7 +55,7 @@ export class CreatePostDto {
   featuredImageUrl?: string;
 
   @IsOptional()
-  @IsISO8601()
+  @IsDate()
   publishingOn?: Date;
 
   @ApiProperty({
