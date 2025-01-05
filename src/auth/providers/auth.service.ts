@@ -7,11 +7,11 @@ export class AuthService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) {}
-  public login(email: string, password: string, id: string) {
-    const user = this.usersService.findById(id);
-    console.log(user);
-    return 'Sample token';
-  }
+  // public login(email: string, password: string, id: string) {
+  //   const user = this.usersService.findById(id);
+  //   console.log(user);
+  //   return 'Sample token';
+  // }
 
   public isAuth() {
     return true;

@@ -1,0 +1,11 @@
+POST http://localhost:3000/tags
+Content-Type: application/json
+
+{
+  "name": "Javascript",
+  "slug": "technology-1",
+  "description": "All about the latest in technology.",
+  "schema": "{\"type\": \"category\", \"fields\": [\"Web\", \"AppMobile\"]}",
+  "featuredImageUrl": "https://example.com/images/technology.jpg"
+}
+

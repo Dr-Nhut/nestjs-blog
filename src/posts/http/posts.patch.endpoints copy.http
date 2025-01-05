@@ -1,7 +1,8 @@
-PATCH http://localhost:3000/posts/1
+PATCH http://localhost:3000/posts
 Content-Type: application/json
 
 {
-  "title": "How to Write a Great Blog Post",
-  "postType":"post"
+  "id": 8,
+  "title": "How to Write a Great Blog Post 1",
+  "tags": [ 3]
 }
